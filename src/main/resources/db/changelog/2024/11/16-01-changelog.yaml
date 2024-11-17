@@ -1,0 +1,188 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1731775091009-1
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_farms
+                  name: id
+                  type: UUID
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: location
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: total_area
+                  type: DOUBLE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: DATETIME
+            tableName: farms
+  - changeSet:
+      id: 1731775091009-2
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_fields
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: area
+                  type: DOUBLE
+              - column:
+                  name: farm_id
+                  type: UUID
+            tableName: fields
+  - changeSet:
+      id: 1731775091009-3
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_harvestdetails
+                  name: id
+                  type: UUID
+              - column:
+                  name: tree_id
+                  type: UUID
+              - column:
+                  name: harvest_id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: quantity
+                  type: DOUBLE
+            tableName: harvest_details
+  - changeSet:
+      id: 1731775091009-4
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_harvests
+                  name: id
+                  type: UUID
+              - column:
+                  name: harvest_date
+                  type: DATETIME
+              - column:
+                  name: season
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: total_quantity
+                  type: DOUBLE
+            tableName: harvests
+  - changeSet:
+      id: 1731775091009-5
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_trees
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: age
+                  type: INT
+              - column:
+                  name: field_id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: planted_at
+                  type: DATETIME
+              - column:
+                  name: productivity_status
+                  type: SMALLINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: seasonal_productivity
+                  type: DOUBLE
+            tableName: trees
+  - changeSet:
+      id: 1731775091009-6
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: farm_id
+            baseTableName: fields
+            constraintName: FK_FIELDS_ON_FARM
+            referencedColumnNames: id
+            referencedTableName: farms
+  - changeSet:
+      id: 1731775091009-7
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: harvest_id
+            baseTableName: harvest_details
+            constraintName: FK_HARVESTDETAILS_ON_HARVEST
+            referencedColumnNames: id
+            referencedTableName: harvests
+  - changeSet:
+      id: 1731775091009-8
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: tree_id
+            baseTableName: harvest_details
+            constraintName: FK_HARVESTDETAILS_ON_TREE
+            referencedColumnNames: id
+            referencedTableName: trees
+  - changeSet:
+      id: 1731775091009-9
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: field_id
+            baseTableName: trees
+            constraintName: FK_TREES_ON_FIELD
+            referencedColumnNames: id
+            referencedTableName: fields
+
