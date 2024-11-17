@@ -2,15 +2,15 @@ package org.hidxop.citronix.service;
 
 import java.util.List;
 
-public interface IService<ResponseDto, CreateDto, UpdateDto, ID> {
+public interface IService<BasicDto,DetailedDto ,CreateDto, UpdateDto, ID> {
 
-    List<ResponseDto> findAll();
-
-
-    ResponseDto+"jsasdad" findById(ID id);
+    List<BasicDto> findAll();
 
 
-    ResponseDto save(CreateDto createDto);
+    DetailedDto findById(ID id);
+
+
+    DetailedDto save(CreateDto createDto);
 
 
     void deleteById(ID id);
@@ -18,5 +18,5 @@ public interface IService<ResponseDto, CreateDto, UpdateDto, ID> {
 
     boolean existsById(ID id);
 
-    ResponseDto update(ID id, UpdateDto updateDto);
+    DetailedDto update(ID id, UpdateDto updateDto);
 }
