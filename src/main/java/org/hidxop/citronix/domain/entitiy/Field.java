@@ -22,6 +22,16 @@ public class Field {
     @ManyToOne
     @JoinColumn(name = "farm_id")
     private Farm farm;
-    @OneToMany(mappedBy = "field")
+    @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tree> trees;
+
+    public void addTree(Tree tree) {
+        trees.add(tree);
+        tree.setField(this);
+    }
+
+    public void removeTree(Tree tree) {
+        trees.remove(tree);
+        tree.setField(null);
+    }
 }

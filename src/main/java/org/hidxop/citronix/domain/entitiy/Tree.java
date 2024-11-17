@@ -28,6 +28,16 @@ public class Tree {
     private LocalDateTime plantedAt;
     private ProductivityStatus productivityStatus;
     private double seasonalProductivity;
-    @OneToMany(mappedBy = "tree")
+    @OneToMany(mappedBy = "tree", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HarvestDetail> harvestDetail;
+
+    public void addHarvestDetail(HarvestDetail detail) {
+        harvestDetail.add(detail);
+        detail.setTree(this);
+    }
+
+    public void removeHarvestDetail(HarvestDetail detail) {
+        harvestDetail.remove(detail);
+        detail.setTree(null);
+    }
 }
