@@ -6,14 +6,15 @@ import org.hidxop.citronix.dto.field.FieldMapper;
 import org.mapstruct.*;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {FieldMapper.class})
 public interface FarmMapper {
 
     FarmBasicResponseDto toBasicDto(Farm farm);
+    List<FarmBasicResponseDto> toBasicDto(List<Farm> farms);
     FarmDetailedResponseDto toDetailedDto(Farm farm);
+    List<FarmDetailedResponseDto> toDetailedDto(List<Farm> farms);
     Farm toEntity(FarmUpdateRequestDto farmUpdateRequestDto);
     Farm toEntity(FarmCreateRequestDto farmCreateRequestDto);
 
