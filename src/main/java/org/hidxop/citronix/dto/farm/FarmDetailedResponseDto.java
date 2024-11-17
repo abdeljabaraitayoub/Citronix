@@ -12,5 +12,5 @@ public record FarmDetailedResponseDto(UUID id,
                                       String location,
                                       double totalArea,
                                       List<FieldBasicResponseDto> fields,
-                                      LocalDateTime CreatedAt)  {
+                                      LocalDateTime createdAt) {
 }

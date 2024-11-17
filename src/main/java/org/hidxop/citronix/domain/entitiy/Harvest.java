@@ -23,8 +23,8 @@ public class Harvest {
     @Enumerated(EnumType.STRING)
     private Season season;
     private  double totalQuantity;
-    @OneToMany(mappedBy = "harvest")
+    @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HarvestDetail> harvestDetails;
-    @OneToMany(mappedBy = "harvest")
+    @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sale> sale;
 }

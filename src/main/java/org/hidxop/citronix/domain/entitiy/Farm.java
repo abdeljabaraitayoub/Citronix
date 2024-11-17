@@ -24,10 +24,10 @@ public class Farm {
     private String name;
     private String location;
     private double totalArea;
-    @OneToMany(mappedBy = "farm")
+    @OneToMany(mappedBy = "farm",cascade = CascadeType.ALL,orphanRemoval = true)
     List<Field> fields;
 
     @Column(name = "created_at",nullable = false)
-    private LocalDateTime CreatedAt;
+    private LocalDateTime createdAt;
 
 }
