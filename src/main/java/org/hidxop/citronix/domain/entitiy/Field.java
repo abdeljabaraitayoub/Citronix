@@ -19,7 +19,7 @@ public class Field {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private double area;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "farm_id")
     private Farm farm;
     @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, orphanRemoval = true)
