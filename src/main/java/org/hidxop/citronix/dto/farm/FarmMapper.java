@@ -8,7 +8,7 @@ import org.mapstruct.*;
 import java.util.List;
 
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {FieldMapper.class})
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface FarmMapper {
 
     FarmBasicResponseDto toBasicDto(Farm farm);

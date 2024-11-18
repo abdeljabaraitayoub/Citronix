@@ -1,5 +1,7 @@
 package org.hidxop.citronix.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hidxop.citronix.domain.entitiy.Farm;
@@ -37,11 +39,11 @@ public class FarmService implements IFarmService {
 
     @Override
     @Transactional
-    public FarmDetailedResponseDto save(FarmCreateRequestDto farmCreateRequestDto) {
+    public FarmBasicResponseDto save(FarmCreateRequestDto farmCreateRequestDto) {
         Farm farm=farmMapper.toEntity(farmCreateRequestDto);
         farm.setCreatedAt(LocalDateTime.now());
         farm=farmRepository.save(farm);
-        return farmMapper.toDetailedDto(farm);
+        return farmMapper.toBasicDto(farm);
     }
     @Override
     @Transactional
@@ -57,7 +59,7 @@ public class FarmService implements IFarmService {
 
     @Transactional
     @Override
-    public FarmDetailedResponseDto update(UUID uuid, FarmUpdateRequestDto farmUpdateRequestDto) {
+    public FarmBasicResponseDto update(UUID uuid, FarmUpdateRequestDto farmUpdateRequestDto) {
         Farm existingFarm = farmRepository.findById(uuid)
                 .orElseThrow(() -> new NotFoundException("Farm not found"));
 
@@ -68,6 +70,23 @@ public class FarmService implements IFarmService {
         existingFarm.setTotalArea(newFarm.getTotalArea());
 
         Farm savedFarm = farmRepository.save(existingFarm);
-        return farmMapper.toDetailedDto(savedFarm);
+        return farmMapper.toBasicDto(savedFarm);
+    }
+
+    public Double calculateFreeArea(Farm farm){
+        farm=refreshFromDB(farm);
+        Double totalArea=farm.getTotalArea();
+        Double consumedArea = farm.getFields().stream().mapToDouble(field->field.getArea()).sum();
+        return totalArea - consumedArea;
+    }
+
+    public int countFieldsPerFarm(Farm farm){
+        farm=refreshFromDB(farm);
+        return farm.getFields().size();
+    }
+
+
+    private Farm refreshFromDB(Farm farm){
+        return farmRepository.findById(farm.getId()).orElseThrow(()->new NotFoundException("Farm Not found."));
     }
 }

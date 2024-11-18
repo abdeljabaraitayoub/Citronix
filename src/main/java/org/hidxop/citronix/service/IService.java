@@ -10,7 +10,7 @@ public interface IService<BasicDto,DetailedDto ,CreateDto, UpdateDto, ID> {
     DetailedDto findById(ID id);
 
 
-    DetailedDto save(CreateDto createDto);
+    BasicDto save(CreateDto createDto);
 
 
     void deleteById(ID id);
@@ -18,5 +18,5 @@ public interface IService<BasicDto,DetailedDto ,CreateDto, UpdateDto, ID> {
 
     boolean existsById(ID id);
 
-    DetailedDto update(ID id, UpdateDto updateDto);
+    BasicDto update(ID id, UpdateDto updateDto);
 }
