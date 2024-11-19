@@ -9,5 +9,6 @@ import org.hidxop.citronix.dto.field.FieldUpdateRequestDto;
 import java.util.UUID;
 
 public interface IFieldService extends IService<FieldBasicResponseDto, FieldDetailedResponseDto, FieldCreateRequestDto, FieldUpdateRequestDto, UUID>{
-    double calculateTreePerAreaRate(Field field);
+
+    double calculateTreePerAreaRate(UUID uuid);
 }

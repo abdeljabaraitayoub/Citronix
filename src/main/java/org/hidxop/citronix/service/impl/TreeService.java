@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hidxop.citronix.domain.entitiy.Field;
 import org.hidxop.citronix.domain.entitiy.Tree;
 import org.hidxop.citronix.dto.tree.*;
-import org.hidxop.citronix.exceptionHandling.exceptions.InvalidStateException;
 import org.hidxop.citronix.exceptionHandling.exceptions.NotFoundException;
-import org.hidxop.citronix.repository.FieldRepository;
 import org.hidxop.citronix.repository.TreeRepository;
 import org.hidxop.citronix.service.ITreeService;
 import org.hidxop.citronix.service.validator.TreeValidator;
@@ -24,12 +22,18 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class TreeService implements ITreeService {
 
-
     private final TreeRepository treeRepository;
     private final TreeMapper treeMapper;
-
-    private final FieldRepository fieldRepository;
     private final TreeValidator treeValidator;
+
+    private final FieldService fieldService;
+
+
+
+    public Tree getTreeById(UUID id){
+        return treeRepository.findById(id).orElseThrow(()->new NotFoundException("Tree Not Found."));
+    }
+
 
     @Override
     public List<TreeBasicResponseDto> findAll() {
@@ -42,10 +46,12 @@ public class TreeService implements ITreeService {
         return treeMapper.toDetailedDto(tree);
     }
 
-    @Transactional
     @Override
-    public TreeBasicResponseDto save(TreeCreateRequestDto treeCreateRequestDto) {
-        Tree tree=treeMapper.toEntity(treeCreateRequestDto);
+    @Transactional
+    public TreeBasicResponseDto save(TreeCreateRequestDto request) {
+        Field field = fieldService.getFieldById(request.fieldId());
+        Tree tree=treeMapper.toEntity(request);
+        tree.setField(field);
         treeValidator.validateTreeCreation(tree);
         treeRepository.save(tree);
         return treeMapper.toBasicDto(tree);
@@ -71,13 +77,12 @@ public class TreeService implements ITreeService {
                 .orElseThrow(() -> new NotFoundException("Tree Not Found"));
 
         if (treeUpdateRequestDto.fieldId() != null) {
-            Field newField = fieldRepository.findById(treeUpdateRequestDto.fieldId())
-                    .orElseThrow(() -> new NotFoundException("Field Not Found"));
+            Field newField = fieldService.getFieldById(treeUpdateRequestDto.fieldId());
             existTree.setField(newField);
         }
 
-        treeMapper.partialUpdate(treeUpdateRequestDto, existTree);
         treeValidator.validateTreeUpdate(existTree);
+        treeMapper.partialUpdate(treeUpdateRequestDto, existTree);
         treeRepository.save(existTree);
         return treeMapper.toBasicDto(existTree);
     }

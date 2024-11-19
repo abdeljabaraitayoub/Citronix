@@ -1,6 +1,5 @@
 package org.hidxop.citronix.repository;
 
-import jakarta.persistence.Id;
 import org.hidxop.citronix.domain.entitiy.Field;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
