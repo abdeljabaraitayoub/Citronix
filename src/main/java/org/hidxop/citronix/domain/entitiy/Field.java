@@ -19,8 +19,8 @@ public class Field {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private double area;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "farm_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "farm_id", updatable = true)
     private Farm farm;
     @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tree> trees;

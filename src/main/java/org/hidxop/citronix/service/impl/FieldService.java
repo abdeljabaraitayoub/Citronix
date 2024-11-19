@@ -2,8 +2,8 @@ package org.hidxop.citronix.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hidxop.citronix.domain.entitiy.Farm;
 import org.hidxop.citronix.domain.entitiy.Field;
-import org.hidxop.citronix.dto.farm.FarmMapper;
 import org.hidxop.citronix.dto.field.*;
 import org.hidxop.citronix.exceptionHandling.exceptions.NotFoundException;
 import org.hidxop.citronix.repository.FieldRepository;
@@ -18,9 +18,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class FieldService implements IFieldService {
+
     private final FieldRepository fieldRepository;
     private final FieldMapper fieldMapper;
     private final FieldValidator fieldValidator;
+
+    private final FarmService farmService;
+
+
+
+    public Field getFieldById(UUID id){
+        return fieldRepository.findById(id).orElseThrow(() -> new NotFoundException("Field Not Found"));
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -31,16 +40,15 @@ public class FieldService implements IFieldService {
     @Override
     @Transactional(readOnly = true)
     public FieldDetailedResponseDto findById(UUID uuid) {
-        return fieldMapper.toDetailedDto(
-                fieldRepository.findByIdWithFarmAndTrees(uuid)
-                        .orElseThrow(() -> new NotFoundException("Field Not Found"))
-        );
+        return fieldMapper.toDetailedDto(getFieldById(uuid));
     }
 
     @Override
     @Transactional
     public FieldBasicResponseDto save(FieldCreateRequestDto request) {
+        Farm farm =farmService.getFarmById(request.farmId());
         Field field = fieldMapper.toEntity(request);
+        field.setFarm(farm);
         fieldValidator.validateFieldCreation(field);
         return fieldMapper.toBasicDto(fieldRepository.save(field));
     }
@@ -48,11 +56,15 @@ public class FieldService implements IFieldService {
     @Override
     @Transactional
     public FieldBasicResponseDto update(UUID uuid, FieldUpdateRequestDto request) {
-        Field existingField = fieldRepository.findByIdWithFarmAndTrees(uuid)
-                .orElseThrow(() -> new NotFoundException("Field Not Found"));
+        Field existingField = getFieldById(uuid);
 
         if (request.area() != null || request.farmId() != null) {
             fieldValidator.validateFieldUpdate(existingField, request);
+        }
+
+        if (request.farmId() != null) {
+            Farm newFarm = farmService.getFarmById(request.farmId());
+            existingField.setFarm(newFarm);
         }
 
         fieldMapper.partialUpdate(request, existingField);
@@ -73,9 +85,8 @@ public class FieldService implements IFieldService {
     }
 
     @Override
-    public double calculateTreePerAreaRate(Field field) {
-        field = fieldRepository.findById(field.getId())
-                .orElseThrow(() -> new NotFoundException("Field not found"));
+    public double calculateTreePerAreaRate(UUID uuid) {
+        Field field= getFieldById(uuid);
         return 1000.0 * field.getTrees().size() / field.getArea();
     }
 }

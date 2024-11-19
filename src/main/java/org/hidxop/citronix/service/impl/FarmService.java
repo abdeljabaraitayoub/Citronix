@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -24,32 +23,41 @@ public class FarmService implements IFarmService {
     private final FarmRepository farmRepository;
     private final FarmMapper farmMapper;
 
-    @Override
-    public List<FarmBasicResponseDto> findAll() {
-        List<Farm> farms=farmRepository.findAll();
-        return farmMapper.toBasicDto(farms);
+    public Farm getFarmById(UUID uuid) {
+        return farmRepository.findById(uuid)
+                .orElseThrow(() -> new NotFoundException("Farm not found with id: " + uuid));
     }
-
 
     @Override
     public FarmDetailedResponseDto findById(UUID uuid) {
-    Farm farm=farmRepository.findById(uuid).orElseThrow(()->new NotFoundException("Farm Not Found."));
-    return farmMapper.toDetailedDto(farm);
+        return farmMapper.toDetailedDto(getFarmById(uuid));
     }
 
     @Override
-    @Transactional
-    public FarmBasicResponseDto save(FarmCreateRequestDto farmCreateRequestDto) {
-        Farm farm=farmMapper.toEntity(farmCreateRequestDto);
-        farm.setCreatedAt(LocalDateTime.now());
-        farm=farmRepository.save(farm);
-        return farmMapper.toBasicDto(farm);
+    public List<FarmBasicResponseDto> findAll() {
+        return farmMapper.toBasicDto(farmRepository.findAll());
     }
-    @Override
+
     @Transactional
+    @Override
+    public FarmBasicResponseDto save(FarmCreateRequestDto createDto) {
+        Farm farm = farmMapper.toEntity(createDto);
+        farm.setCreatedAt(LocalDateTime.now());
+        return farmMapper.toBasicDto(farmRepository.save(farm));
+    }
+
+    @Transactional
+    @Override
+    public FarmBasicResponseDto update(UUID uuid, FarmUpdateRequestDto updateDto) {
+        Farm farm = getFarmById(uuid);
+        farmMapper.partialUpdate(updateDto, farm);
+        return farmMapper.toBasicDto(farmRepository.save(farm));
+    }
+
+    @Transactional
+    @Override
     public void deleteById(UUID uuid) {
-        Farm farm=farmRepository.findById(uuid).orElseThrow(()-> new NotFoundException("Farm Not Found."));
-        farmRepository.delete(farm);
+        farmRepository.delete(getFarmById(uuid));
     }
 
     @Override
@@ -57,32 +65,14 @@ public class FarmService implements IFarmService {
         return farmRepository.existsById(uuid);
     }
 
-    @Transactional
-    @Override
-    public FarmBasicResponseDto update(UUID uuid, FarmUpdateRequestDto farmUpdateRequestDto) {
-        Farm existingFarm = farmRepository.findById(uuid)
-                .orElseThrow(() -> new NotFoundException("Farm not found"));
-
-        farmMapper.partialUpdate(farmUpdateRequestDto, existingFarm);
-
-        Farm savedFarm = farmRepository.save(existingFarm);
-        return farmMapper.toBasicDto(savedFarm);
+    public Double calculateFreeArea(UUID farmId) {
+        Farm farm = getFarmById(farmId);
+        return farm.getTotalArea() - farm.getFields().stream()
+                .mapToDouble(field -> field.getArea())
+                .sum();
     }
 
-    public Double calculateFreeArea(Farm farm){
-        farm=refreshFromDB(farm);
-        Double totalArea=farm.getTotalArea();
-        Double consumedArea = farm.getFields().stream().mapToDouble(field->field.getArea()).sum();
-        return totalArea - consumedArea;
-    }
-
-    public int countFieldsPerFarm(Farm farm){
-        farm=refreshFromDB(farm);
-        return farm.getFields().size();
-    }
-
-
-    private Farm refreshFromDB(Farm farm){
-        return farmRepository.findById(farm.getId()).orElseThrow(()->new NotFoundException("Farm Not found."));
+    public int countFields(UUID farmId) {
+        return getFarmById(farmId).getFields().size();
     }
 }

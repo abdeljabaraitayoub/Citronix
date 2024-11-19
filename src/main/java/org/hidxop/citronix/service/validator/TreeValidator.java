@@ -30,7 +30,7 @@ public class TreeValidator {
     }
 
     private void validateTreeCount(Tree tree){
-        double treeRatePerField=fieldService.calculateTreePerAreaRate(tree.getField());
+        double treeRatePerField=fieldService.calculateTreePerAreaRate(tree.getField().getId());
         if (treeRatePerField>10.00){
             throw new InvalidStateException("The Field is already full of trees.");
         }

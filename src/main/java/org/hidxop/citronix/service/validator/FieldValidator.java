@@ -17,7 +17,6 @@ public class FieldValidator {
     private final FarmService farmService;
     private static final int MAX_FIELDS_PER_FARM = 10;
     private static final double MAX_FIELD_TO_FARM_RATIO = 0.5;
-    private final FarmMapper farmMapper;
 
     public void validateFieldCreation(Field field) {
         Farm farm = field.getFarm();
@@ -31,7 +30,7 @@ public class FieldValidator {
         double newArea = request.area() != null ? request.area() : existingField.getArea();
 
         if (newFarmId != null && !existingField.getFarm().getId().equals(newFarmId)) {
-            Farm newFarm = farmMapper.toEntity(farmService.findById(newFarmId));
+            Farm newFarm = farmService.getFarmById(newFarmId);
             validateFieldCount(newFarm);
             validateFieldArea(newArea, newFarm);
             validateFarmFreeArea(newArea, newFarm, 0);
@@ -43,7 +42,7 @@ public class FieldValidator {
     }
 
     private void validateFieldCount(Farm farm) {
-        if (farmService.countFieldsPerFarm(farm) >= MAX_FIELDS_PER_FARM) {
+        if (farmService.countFields(farm.getId()) >= MAX_FIELDS_PER_FARM) {
             throw new InvalidStateException("The fields number shouldn't be bigger than 10 for each farm.");
         }
     }
@@ -55,7 +54,7 @@ public class FieldValidator {
     }
 
     private void validateFarmFreeArea(double newArea, Farm farm, double existingArea) {
-        double freeArea = farmService.calculateFreeArea(farm) + existingArea;
+        double freeArea = farmService.calculateFreeArea(farm.getId()) + existingArea;
         if (freeArea < newArea) {
             throw new InvalidStateException("The farm free Area should be bigger than the new Field Area.");
         }
