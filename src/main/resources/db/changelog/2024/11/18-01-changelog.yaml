@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1731946610881-1
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropColumn:
+            columnName: age
+            tableName: trees
+        - dropColumn:
+            columnName: productivity_status
+            tableName: trees
+        - dropColumn:
+            columnName: seasonal_productivity
+            tableName: trees
+

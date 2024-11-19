@@ -1,8 +1,6 @@
 package org.hidxop.citronix.dto.field;
 
 import org.hidxop.citronix.domain.entitiy.Field;
-import org.hidxop.citronix.dto.farm.FarmMapper;
-import org.hidxop.citronix.dto.tree.TreeMapper;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -20,5 +18,8 @@ public interface FieldMapper {
     @Mapping(source = "farmId", target = "farm.id")
     Field toEntity(FieldCreateRequestDto fieldCreateRequestDto);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "farmId", target = "farm.id")
+    void partialUpdate(FieldUpdateRequestDto fieldUpdateRequestDto,@MappingTarget Field field);
 
 }

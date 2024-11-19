@@ -63,11 +63,7 @@ public class FarmService implements IFarmService {
         Farm existingFarm = farmRepository.findById(uuid)
                 .orElseThrow(() -> new NotFoundException("Farm not found"));
 
-        Farm newFarm=farmMapper.toEntity(farmUpdateRequestDto);
-
-        existingFarm.setName(newFarm.getName());
-        existingFarm.setLocation(newFarm.getLocation());
-        existingFarm.setTotalArea(newFarm.getTotalArea());
+        farmMapper.partialUpdate(farmUpdateRequestDto, existingFarm);
 
         Farm savedFarm = farmRepository.save(existingFarm);
         return farmMapper.toBasicDto(savedFarm);

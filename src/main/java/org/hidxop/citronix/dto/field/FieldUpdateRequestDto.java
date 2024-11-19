@@ -7,5 +7,5 @@ import java.io.Serializable;
 import java.util.UUID;
 
 
-public record FieldUpdateRequestDto(@Min(1000) double area,UUID farmId){
+public record FieldUpdateRequestDto(@Min(1000) Double area,UUID farmId){
 }

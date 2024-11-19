@@ -3,124 +3,79 @@ package org.hidxop.citronix.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hidxop.citronix.domain.entitiy.Field;
+import org.hidxop.citronix.dto.farm.FarmMapper;
 import org.hidxop.citronix.dto.field.*;
-import org.hidxop.citronix.exceptionHandling.exceptions.InvalidStateException;
 import org.hidxop.citronix.exceptionHandling.exceptions.NotFoundException;
 import org.hidxop.citronix.repository.FieldRepository;
 import org.hidxop.citronix.service.IFieldService;
+import org.hidxop.citronix.service.validator.FieldValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
 public class FieldService implements IFieldService {
     private final FieldRepository fieldRepository;
     private final FieldMapper fieldMapper;
-    private final FarmService farmService;
+    private final FieldValidator fieldValidator;
 
     @Override
+    @Transactional(readOnly = true)
     public List<FieldBasicResponseDto> findAll() {
-        List<Field> fields= fieldRepository.findAll();
-        return fieldMapper.toBasicDto(fields);
+        return fieldMapper.toBasicDto(fieldRepository.findAll());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public FieldDetailedResponseDto findById(UUID uuid) {
-        Field field=fieldRepository.findByIdWithFarmAndTrees(uuid).orElseThrow(()->new NotFoundException("Field Not Found."));
-        return fieldMapper.toDetailedDto(field);
+        return fieldMapper.toDetailedDto(
+                fieldRepository.findByIdWithFarmAndTrees(uuid)
+                        .orElseThrow(() -> new NotFoundException("Field Not Found"))
+        );
     }
 
     @Override
     @Transactional
-    public FieldBasicResponseDto save(FieldCreateRequestDto fieldCreateRequestDto) {
-        Field field =fieldMapper.toEntity(fieldCreateRequestDto);
-        fieldCreationValidation(field);
-        field=fieldRepository.save(field);
-        return fieldMapper.toBasicDto(field);
+    public FieldBasicResponseDto save(FieldCreateRequestDto request) {
+        Field field = fieldMapper.toEntity(request);
+        fieldValidator.validateFieldCreation(field);
+        return fieldMapper.toBasicDto(fieldRepository.save(field));
     }
 
-
-    private void fieldCreationValidation(Field field){
-        Double freeArea=farmService.calculateFreeArea(field.getFarm());
-        double farmArea= farmService.findById(field.getFarm().getId()).totalArea();
-        int fieldCount=farmService.countFieldsPerFarm(field.getFarm());
-        if (fieldCount>9){
-            throw new InvalidStateException("The fields number shouldn't be bigger than 10 for each farm.");
-        }
-        if (field.getArea() > farmArea * 0.5) {
-            throw new InvalidStateException("The field area shouldn't be bigger than 50% of the farm area.");
-        }
-        if (freeArea<field.getArea()){
-            throw new InvalidStateException("The farm free Area should be bigger than the the new Field Area.");
-        }
-    }
-
-    @Transactional
     @Override
+    @Transactional
+    public FieldBasicResponseDto update(UUID uuid, FieldUpdateRequestDto request) {
+        Field existingField = fieldRepository.findByIdWithFarmAndTrees(uuid)
+                .orElseThrow(() -> new NotFoundException("Field Not Found"));
+
+        if (request.area() != null || request.farmId() != null) {
+            fieldValidator.validateFieldUpdate(existingField, request);
+        }
+
+        fieldMapper.partialUpdate(request, existingField);
+        return fieldMapper.toBasicDto(fieldRepository.save(existingField));
+    }
+
+    @Override
+    @Transactional
     public void deleteById(UUID uuid) {
-        Field field=fieldRepository.findById(uuid).orElseThrow(()->new NotFoundException("Field Not Found."));
-        fieldRepository.delete(field);
+        fieldRepository.findById(uuid)
+                .orElseThrow(() -> new NotFoundException("Field Not Found"));
+        fieldRepository.deleteById(uuid);
     }
 
     @Override
     public boolean existsById(UUID uuid) {
-        return fieldRepository.existsById(uuid);
+        return false;
     }
-    @Transactional
+
     @Override
-    public FieldBasicResponseDto update(UUID uuid, FieldUpdateRequestDto fieldUpdateRequestDto) {
-        Field existfield=fieldRepository.findByIdWithFarmAndTrees(uuid).orElseThrow(()->new NotFoundException("Field Not Found."));
-        Field newfield=fieldMapper.toEntity(fieldUpdateRequestDto);
-        fieldUpdateValidation(existfield,newfield);
-        if (newfield.getArea() != 0.0) {
-            existfield.setArea(newfield.getArea());
-        }
-        if (newfield.getFarm() != null) {
-            existfield.setFarm(newfield.getFarm());
-        }
-
-        existfield=fieldRepository.save(existfield);
-        return fieldMapper.toBasicDto(existfield);
+    public double calculateTreePerAreaRate(Field field) {
+        field = fieldRepository.findById(field.getId())
+                .orElseThrow(() -> new NotFoundException("Field not found"));
+        return 1000.0 * field.getTrees().size() / field.getArea();
     }
-
-
-
-    private void fieldUpdateValidation(Field existfield,Field newField){
-        double freeArea;
-        double farmArea;
-        int fieldCount;
-        if (!existfield.getFarm().getId().equals(newField.getFarm().getId())){
-            freeArea=farmService.calculateFreeArea(newField.getFarm());
-            farmArea= farmService.findById(newField.getFarm().getId()).totalArea();
-            fieldCount=farmService.countFieldsPerFarm(newField.getFarm());
-
-            if (fieldCount>9){
-                throw new InvalidStateException("The fields number shouldn't be bigger than 10 for each farm.");
-            }
-            if (newField.getArea() > farmArea * 0.5) {
-                throw new InvalidStateException("The field area shouldn't be bigger than 50% of the farm area.");
-            }
-            if (freeArea<newField.getArea()){
-                throw new InvalidStateException("The farm free Area should be bigger than the the new Field Area.");
-            }
-
-        }
-        else {
-            freeArea=farmService.calculateFreeArea(existfield.getFarm());
-            farmArea= farmService.findById(existfield.getFarm().getId()).totalArea();
-            if (newField.getArea() > farmArea * 0.5) {
-                throw new InvalidStateException("The field area shouldn't be bigger than 50% of the farm area.");
-            }
-            if (freeArea+existfield.getArea()<newField.getArea()){
-                throw new InvalidStateException("The farm free Area should be bigger than the the new Field Area.");
-            }
-        }
-
-    }
-
 }
