@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1732044869371-1
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropColumn:
+            columnName: season
+            tableName: harvests
+        - dropColumn:
+            columnName: total_quantity
+            tableName: harvests
+

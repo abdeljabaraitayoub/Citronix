@@ -12,6 +12,7 @@ import java.time.Month;
 @RequiredArgsConstructor
 public class TreeValidator {
 
+    public static final double MAX_FIELD = 10.00;
     private final FieldService fieldService;
 
     public void validateTreeUpdate(Tree tree){
@@ -31,7 +32,7 @@ public class TreeValidator {
 
     private void validateTreeCount(Tree tree){
         double treeRatePerField=fieldService.calculateTreePerAreaRate(tree.getField().getId());
-        if (treeRatePerField>10.00){
+        if (treeRatePerField> MAX_FIELD){
             throw new InvalidStateException("The Field is already full of trees.");
         }
     }

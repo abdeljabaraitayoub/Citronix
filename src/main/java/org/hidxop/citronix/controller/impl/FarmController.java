@@ -48,6 +48,7 @@ public class FarmController implements IFarmController {
     @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable @Valid UUID id){
+
         farmService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

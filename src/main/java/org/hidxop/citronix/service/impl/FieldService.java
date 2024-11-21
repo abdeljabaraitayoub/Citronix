@@ -89,4 +89,5 @@ public class FieldService implements IFieldService {
         Field field= getFieldById(uuid);
         return 1000.0 * field.getTrees().size() / field.getArea();
     }
+
 }

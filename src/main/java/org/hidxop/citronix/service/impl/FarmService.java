@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hidxop.citronix.domain.entitiy.Farm;
 import org.hidxop.citronix.dto.farm.*;
+import org.hidxop.citronix.exceptionHandling.exceptions.InvalidStateException;
 import org.hidxop.citronix.exceptionHandling.exceptions.NotFoundException;
 import org.hidxop.citronix.repository.FarmRepository;
 import org.hidxop.citronix.service.IFarmService;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @Slf4j
 @Transactional(readOnly = true)
 public class FarmService implements IFarmService {
+
     private final FarmRepository farmRepository;
     private final FarmMapper farmMapper;
 
@@ -57,7 +59,11 @@ public class FarmService implements IFarmService {
     @Transactional
     @Override
     public void deleteById(UUID uuid) {
-        farmRepository.delete(getFarmById(uuid));
+        Farm farm = getFarmById(uuid);
+        if (!farm.getFields().isEmpty()) {
+            throw new InvalidStateException("Cannot delete farm with existing fields. Please delete or reassign fields first.");
+        }
+        farmRepository.delete(farm);
     }
 
     @Override

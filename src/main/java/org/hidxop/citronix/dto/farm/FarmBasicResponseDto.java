@@ -7,5 +7,5 @@ public record FarmBasicResponseDto(UUID id,
                                    String name,
                                    String location,
                                    double totalArea,
-                                   LocalDateTime CreatedAt) {
+                                   LocalDateTime createdAt) {
 }
