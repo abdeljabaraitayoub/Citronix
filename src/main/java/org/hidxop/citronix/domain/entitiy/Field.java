@@ -22,7 +22,7 @@ public class Field {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farm_id", updatable = true)
     private Farm farm;
-    @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "field")
     private List<Tree> trees;
 
     public void addTree(Tree tree) {
@@ -34,4 +34,6 @@ public class Field {
         trees.remove(tree);
         tree.setField(null);
     }
+
+
 }

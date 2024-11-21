@@ -39,7 +39,7 @@ public class Tree {
     @Transient
     private double seasonalProductivity;
 
-    @OneToMany(mappedBy = "tree", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "tree")
     private List<HarvestDetail> harvestDetail = new ArrayList<>();
 
     public void addHarvestDetail(HarvestDetail detail) {
@@ -76,6 +76,7 @@ public class Tree {
     private double calculateSeasonalProductivity() {
         if (age < 3) return 2.5;
         if (age <= 10) return 12.0;
-        return 20.0;
+        if (age <= 20) return 20.0;
+        return 0;
     }
 }
