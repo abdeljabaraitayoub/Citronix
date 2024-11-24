@@ -59,8 +59,8 @@ public class HarvestService implements IHarvestService {
         Field field = fieldService.getFieldById(harvestDetail.getTree().getField().getId());
 
          harvestValidator.validateCreateHarvest(field,getAllHarvests(),harvestDetail.getHarvest().getHarvestDate());
-
         Harvest finalHarvest = harvest;
+
         List<HarvestDetail> harvestDetails = new ArrayList<>();
         field.getTrees().forEach(tree -> {
             HarvestDetail newHarvestDetail = new HarvestDetail();

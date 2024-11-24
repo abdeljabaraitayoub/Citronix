@@ -25,7 +25,6 @@ public class Field {
     @JoinColumn(name = "farm_id", updatable = true)
     private Farm farm;
 
-    @Builder.Default
     @OneToMany(mappedBy = "field")
     private List<Tree> trees = new ArrayList<>();
 

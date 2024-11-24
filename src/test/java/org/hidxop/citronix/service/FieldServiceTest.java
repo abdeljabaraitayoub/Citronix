@@ -118,6 +118,7 @@ public class FieldServiceTest {
 
         Field field = fieldFactory.createDefault();
         field.setFarm(farm);
+        field.setArea(area);
 
         FieldBasicResponseDto expectedResponse = new FieldBasicResponseDto(
                 field.getId(),

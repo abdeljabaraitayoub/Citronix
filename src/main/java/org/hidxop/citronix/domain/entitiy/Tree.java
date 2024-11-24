@@ -2,6 +2,8 @@ package org.hidxop.citronix.domain.entitiy;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hidxop.citronix.domain.enumeration.ProductivityStatus;
 
 import java.time.LocalDate;
@@ -26,7 +28,7 @@ public class Tree {
     @Transient
     private int age;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "field_id")
     private Field field;
 
@@ -59,9 +61,9 @@ public class Tree {
     @PostLoad
     @PreUpdate
     @PrePersist
-    private void calculateDerivedFields() {
+    private void calculateTreeMetrics() {
         if (this.plantedAt != null) {
-            this.age = Period.between(this.plantedAt.toLocalDate(), LocalDate.now()).getYears();
+            this.age = calculateAge();
             this.productivityStatus = calculateProductivityStatus();
             this.seasonalProductivity = calculateSeasonalProductivity();
         }
@@ -71,6 +73,10 @@ public class Tree {
         if (age < 3) return ProductivityStatus.YOUNG;
         if (age <= 10) return ProductivityStatus.MATURE;
         return ProductivityStatus.OLD;
+    }
+
+    private int calculateAge() {
+       return Period.between(this.plantedAt.toLocalDate(), LocalDate.now()).getYears();
     }
 
     private double calculateSeasonalProductivity() {
