@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1731775091009-10
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: harvest_details
+            constraintName: FK_HARVESTDETAILS_ON_TREE
+        - addForeignKeyConstraint:
+            baseColumnNames: tree_id
+            baseTableName: harvest_details
+            constraintName: FK_HARVESTDETAILS_ON_TREE
+            referencedColumnNames: id
+            referencedTableName: trees
+            onDelete: SET NULL
