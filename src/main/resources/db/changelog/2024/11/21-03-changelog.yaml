@@ -1,0 +1,66 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1732212808400-1
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - loadData:
+            tableName: farms
+            file: ../../data/farms.csv
+            relativeToChangelogFile: true
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+              - column:
+                  name: name
+                  type: string
+              - column:
+                  name: location
+                  type: string
+              - column:
+                  name: total_area
+                  type: numeric
+              - column:
+                  name: created_at
+                  type: timestamp
+
+  - changeSet:
+      id: 1732212808400-2
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - loadData:
+            tableName: fields
+            file: ../../data/fields.csv
+            relativeToChangelogFile: true
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+              - column:
+                  name: area
+                  type: numeric
+              - column:
+                  name: farm_id
+                  type: uuid
+
+  - changeSet:
+      id: 1732212808400-3
+      author: hidxop
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - loadData:
+            tableName: trees
+            file: ../../data/trees.csv
+            relativeToChangelogFile: true
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+              - column:
+                  name: field_id
+                  type: uuid
+              - column:
+                  name: planted_at
+                  type: timestamp

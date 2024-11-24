@@ -1,15 +1,14 @@
-package org.hidxop.citronix.controller.impl;
+package org.hidxop.citronix.http.controller.impl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hidxop.citronix.controller.ITreeController;
+import org.hidxop.citronix.http.controller.ITreeController;
 import org.hidxop.citronix.dto.tree.TreeBasicResponseDto;
 import org.hidxop.citronix.dto.tree.TreeCreateRequestDto;
 import org.hidxop.citronix.dto.tree.TreeDetailedResponseDto;
 import org.hidxop.citronix.dto.tree.TreeUpdateRequestDto;
 import org.hidxop.citronix.service.ITreeService;
-import org.hidxop.citronix.service.impl.TreeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

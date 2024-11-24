@@ -1,4 +1,4 @@
-package org.hidxop.citronix.controller;
+package org.hidxop.citronix.http.controller;
 
 import org.hidxop.citronix.dto.field.FieldBasicResponseDto;
 import org.hidxop.citronix.dto.field.FieldCreateRequestDto;

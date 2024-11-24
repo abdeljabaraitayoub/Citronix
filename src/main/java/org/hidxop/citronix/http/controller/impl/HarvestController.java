@@ -1,9 +1,9 @@
-package org.hidxop.citronix.controller.impl;
+package org.hidxop.citronix.http.controller.impl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hidxop.citronix.controller.IHarvestController;
+import org.hidxop.citronix.http.controller.IHarvestController;
 import org.hidxop.citronix.dto.harvest.HarvestBasicResponseDto;
 import org.hidxop.citronix.dto.harvest.HarvestDetailedResponseDto;
 import org.hidxop.citronix.dto.harvest.HarvestDetailsCreateRequestDto;
@@ -34,8 +34,11 @@ public class HarvestController implements IHarvestController {
     }
 
     @Override
-    public ResponseEntity<HarvestDetailedResponseDto> findById(UUID uuid) {
-        return null;
+    @GetMapping("/{id}")
+    public ResponseEntity<HarvestDetailedResponseDto> findById(@Valid @PathVariable UUID id) {
+
+        HarvestDetailedResponseDto detailedResponseDto =harvestService.findById(id);
+        return ResponseEntity.ok(detailedResponseDto);
     }
 
     @Override

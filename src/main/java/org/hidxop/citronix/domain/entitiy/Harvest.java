@@ -24,7 +24,8 @@ public class Harvest {
 
     @Transient
     private Season season;
-    @Transient
+
+
     private  double totalQuantity;
 
     @OneToMany(mappedBy = "harvest",cascade = CascadeType.REMOVE ,orphanRemoval = true)
@@ -47,29 +48,23 @@ public void removeHarvestDetail(HarvestDetail detail) {
     }
 }
     @PostLoad
-    @PreUpdate
-    @PrePersist
-    private void calculateDerivedFields() {
-        if (this.harvestDate != null) {
-            this.season = determineSeason();
-            this.totalQuantity = calculateTotalQuantity();
-        }
-    }
-
-    private Season determineSeason() {
+    private void determineSeason() {
         Month month = harvestDate.getMonth();
-        return switch (month) {
-            case DECEMBER, JANUARY, FEBRUARY -> Season.WINTER;
-            case MARCH, APRIL, MAY -> Season.SPRING;
-            case JUNE, JULY, AUGUST -> Season.SUMMER;
-            case SEPTEMBER, OCTOBER, NOVEMBER -> Season.FALL;
+       switch (month) {
+            case DECEMBER, JANUARY, FEBRUARY ->this.season=Season.WINTER;
+            case MARCH, APRIL, MAY ->this.season= Season.SPRING;
+            case JUNE, JULY, AUGUST ->this.season= Season.SUMMER;
+            case SEPTEMBER, OCTOBER, NOVEMBER ->this.season= Season.FALL;
         };
     }
 
-    private double calculateTotalQuantity() {
-        return harvestDetails.stream()
+    @PreUpdate
+    @PrePersist
+    private void calculateTotalQuantity() {
+        this.totalQuantity=harvestDetails.stream()
                 .mapToDouble(HarvestDetail::getQuantity)
                 .sum();
+        determineSeason();
     }
 
 

@@ -12,6 +12,7 @@ public interface FarmMapper {
     FarmBasicResponseDto toBasicDto(Farm farm);
     List<FarmBasicResponseDto> toBasicDto(List<Farm> farms);
     FarmDetailedResponseDto toDetailedDto(Farm farm);
+    List<FarmDetailedResponseDto> toDetailedDto(List<Farm> farm);
 //    Farm toEntity(FarmDetailedResponseDto detailedResponseDto);
 //    List<FarmDetailedResponseDto> toDetailedDto(List<Farm> farms);
 //    Farm toEntity(FarmUpdateRequestDto farmUpdateRequestDto);

@@ -87,32 +87,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // Handle Constraint Violations
-    @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<ErrorResponse> handleConstraintViolation(
-            ConstraintViolationException ex, HttpServletRequest request) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach(violation ->
-                errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
-
-        return createErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "Constraint violation",
-                request.getRequestURI(),
-                errors
-        );
-    }
-
-    // Handle Data Integrity Violations (e.g., unique constraint violations)
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
-            DataIntegrityViolationException ex, HttpServletRequest request) {
-        return createErrorResponse(
-                HttpStatus.CONFLICT,
-                "Data integrity violation: " + ex.getMostSpecificCause().getMessage(),
-                request.getRequestURI()
-        );
-    }
 
     // Handle Authentication Errors
 //    @ExceptionHandler(BadCredentialsException.class)
@@ -125,27 +99,7 @@ public class GlobalExceptionHandler {
 //        );
 //    }
 
-    // Handle Authorization Errors
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDenied(
-            AccessDeniedException ex, HttpServletRequest request) {
-        return createErrorResponse(
-                HttpStatus.FORBIDDEN,
-                "Access denied",
-                request.getRequestURI()
-        );
-    }
 
-    // Handle Missing Parameters
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponse> handleMissingParams(
-            MissingServletRequestParameterException ex, HttpServletRequest request) {
-        return createErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "Missing parameter: " + ex.getParameterName(),
-                request.getRequestURI()
-        );
-    }
 
     // Handle Type Mismatch
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -160,18 +114,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // Handle Custom Business Exception
-//    @ExceptionHandler(BusinessException.class)
-//    public ResponseEntity<ErrorResponse> handleBusinessException(
-//            BusinessException ex, HttpServletRequest request) {
-//        return createErrorResponse(
-//                ex.getStatus(),
-//                ex.getMessage(),
-//                request.getRequestURI(),
-//                ex.getErrors()
-//        );
-//    }
-
     // Handle All Other Exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllOtherExceptions(
@@ -183,7 +125,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // Helper Methods
     private ResponseEntity<ErrorResponse> createErrorResponse(
             HttpStatus status, String message, String path) {
         return createErrorResponse(status, message, path, null);

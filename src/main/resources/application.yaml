@@ -11,7 +11,6 @@ spring:
     show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
         hbm2ddl:
           auto: none
@@ -23,3 +22,4 @@ server:
   servlet:
     context-path: /api
 
+Xshare: off

@@ -1,9 +1,9 @@
-package org.hidxop.citronix.controller.impl;
+package org.hidxop.citronix.http.controller.impl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hidxop.citronix.controller.IFieldController;
+import org.hidxop.citronix.http.controller.IFieldController;
 import org.hidxop.citronix.dto.field.FieldBasicResponseDto;
 import org.hidxop.citronix.dto.field.FieldCreateRequestDto;
 import org.hidxop.citronix.dto.field.FieldDetailedResponseDto;

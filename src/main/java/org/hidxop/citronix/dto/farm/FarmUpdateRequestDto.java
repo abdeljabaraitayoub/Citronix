@@ -3,7 +3,6 @@ import jakarta.validation.constraints.Positive;
 
 public record FarmUpdateRequestDto(
         String name,
-
         String location,
         @Positive
         Double totalArea

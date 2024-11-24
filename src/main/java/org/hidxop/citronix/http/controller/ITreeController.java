@@ -1,9 +1,5 @@
-package org.hidxop.citronix.controller;
+package org.hidxop.citronix.http.controller;
 
-import org.hidxop.citronix.dto.farm.FarmBasicResponseDto;
-import org.hidxop.citronix.dto.farm.FarmCreateRequestDto;
-import org.hidxop.citronix.dto.farm.FarmDetailedResponseDto;
-import org.hidxop.citronix.dto.farm.FarmUpdateRequestDto;
 import org.hidxop.citronix.dto.tree.TreeBasicResponseDto;
 import org.hidxop.citronix.dto.tree.TreeCreateRequestDto;
 import org.hidxop.citronix.dto.tree.TreeDetailedResponseDto;

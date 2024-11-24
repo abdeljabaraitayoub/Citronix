@@ -91,9 +91,14 @@ public class HarvestService implements IHarvestService {
     @Override
     @Transactional
     public HarvestBasicResponseDto update(UUID uuid, HarvestUpdateRequestDto harvestUpdateRequestDto) {
-        Harvest existHarvest=getHarvestById(uuid);
-        harvestMapper.partialUpdate(harvestUpdateRequestDto,existHarvest);
-        harvestValidator.validateUpdateHarvest(existHarvest.getHarvestDetails().get(0).getTree().getField(), getAllHarvests(),existHarvest.getHarvestDate(),existHarvest);
+        Harvest existHarvest = getHarvestById(uuid);
+        harvestMapper.partialUpdate(harvestUpdateRequestDto, existHarvest);
+        harvestValidator.validateUpdateHarvest(
+                existHarvest.getHarvestDetails().get(0).getTree().getField(),
+                getAllHarvests(),
+                existHarvest.getHarvestDate(),
+                existHarvest
+        );
         harvestRepository.save(existHarvest);
         return harvestMapper.toBasicDto(existHarvest);
     }

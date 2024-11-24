@@ -8,5 +8,10 @@ import org.hidxop.citronix.dto.farm.FarmUpdateRequestDto;
 import java.util.List;
 import java.util.UUID;
 
-public interface IFarmService extends IService<FarmBasicResponseDto, FarmDetailedResponseDto ,FarmCreateRequestDto, FarmUpdateRequestDto, UUID> {
+public interface IFarmService extends IService<FarmBasicResponseDto, FarmDetailedResponseDto, FarmCreateRequestDto, FarmUpdateRequestDto, UUID> {
+    List<FarmBasicResponseDto> search(
+            String name,
+            String location,
+            String totalArea
+    );
 }
