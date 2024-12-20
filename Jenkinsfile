@@ -18,9 +18,5 @@ pipeline{
             steps{
             echo("deploy")
             }
-
-        }
     }
-
-
 }
