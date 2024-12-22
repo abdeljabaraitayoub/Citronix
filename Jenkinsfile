@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_URL = 'http://sonarqube:9000'  // Change if needed (use Docker host IP or container name)
+        SONARQUBE_URL = 'http://sonarqube:9000'  
         SONAR_TOKEN = credentials('sonar')
     }
 
