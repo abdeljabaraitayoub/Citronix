@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
-@SpringBootTest
+//@SpringBootTest
 public class FieldServiceTest {
 
 //    private Faker faker;
@@ -204,7 +204,7 @@ public class FieldServiceTest {
 //
 //        Assertions.assertThat(response).isEqualTo(expectedResponse);
 //    }
-    @Test
-    public void calculateTreePerAreaRate_ShouldReturnDouble() {
-    }
+//    @Test
+//    public void calculateTreePerAreaRate_ShouldReturnDouble() {
+//    }
 }
