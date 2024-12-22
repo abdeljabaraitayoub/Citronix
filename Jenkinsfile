@@ -56,23 +56,20 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    docker.build("${DOCKER_REGISTRY}/${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_TAG}")
+                    docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_TAG}")
                 }
             }
         }
+    }
 
-        stage('Push Docker Image') {
-            steps {
-                script {
-                     echo 'Pushing Docker image to Docker Hub...'
-                        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh '''#!/bin/bash
-                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                        docker push $DOCKER_REGISTRY/$DOCKER_USERNAME/$DOCKER_IMAGE_NAME:$DOCKER_TAG
-                        '''
-                    }
-                }
-            }
+    post {
+        success {
+            mail to: 'abdeljabarayoubi@gmail.com',
+                 subject: "Jenkins Build Success: ${env.JOB_NAME} ${env.BUILD_NUMBER}",
+                 body: "The build was successful! You can check it at ${env.BUILD_URL}"
+        }
+        failure {
+            echo 'Build failed!'
         }
     }
 }
