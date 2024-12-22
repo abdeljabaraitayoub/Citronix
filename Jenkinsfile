@@ -56,7 +56,7 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_TAG}")
+                    docker.build("${DOCKER_REGISTRY}/${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_TAG}")
                 }
             }
         }
