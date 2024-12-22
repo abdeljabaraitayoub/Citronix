@@ -14,12 +14,11 @@ import org.hidxop.citronix.service.validator.FieldValidator;
 import org.hidxop.citronix.utils.factories.FarmFactory;
 import org.hidxop.citronix.utils.factories.FieldFactory;
 import org.hidxop.citronix.utils.factories.TreeFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -27,15 +26,12 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
 public class FieldServiceTest {
 
-    @Autowired
     private Faker faker;
-    @Autowired
     private FieldFactory fieldFactory;
-    @Autowired
     private FarmFactory farmFactory;
+    private TreeFactory treeFactory;
 
     @Mock
     private FieldRepository fieldRepository;
@@ -48,70 +44,69 @@ public class FieldServiceTest {
 
     @InjectMocks
     private FieldService fieldService;
-    @Autowired
-    private TreeFactory treeFactory;
 
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        faker = new Faker();
+        fieldFactory = new FieldFactory();
+        farmFactory = new FarmFactory();
+        treeFactory = new TreeFactory();
+    }
 
     @Test
-    public void findById_ShouldReturnDto(){
-    //    arrange
-        Field field=fieldFactory.createDefault();
+    public void findById_ShouldReturnDto() {
+        // Arrange
+        Field field = fieldFactory.createDefault();
+        FieldDetailedResponseDto expectedDto = new FieldDetailedResponseDto(field.getId(), field.getArea(), null, null);
 
-        FieldDetailedResponseDto expectedDto = new FieldDetailedResponseDto(field.getId(), field.getArea(),null,null);
         when(fieldRepository.findById(field.getId())).thenReturn(Optional.of(field));
         when(fieldMapper.toDetailedDto(field)).thenReturn(expectedDto);
 
-    //        act
-        FieldDetailedResponseDto field1 =fieldService.findById(field.getId());
-    //        assert
+        // Act
+        FieldDetailedResponseDto field1 = fieldService.findById(field.getId());
+
+        // Assert
         Assertions.assertThat(field1).isNotNull();
         Assertions.assertThat(field1.id()).isEqualTo(field.getId());
-        }
+    }
+
     @Test
     public void findById_ShouldThrowNotFoundException() {
-
         UUID randomId = UUID.randomUUID();
-
         when(fieldRepository.findById(randomId)).thenReturn(Optional.empty());
 
         Assertions.assertThatThrownBy(() -> fieldService.findById(randomId))
                 .isInstanceOf(NotFoundException.class);
     }
 
-
     @Test
-    public void deleteById_ShouldReturnVoid(){
-        Field field=fieldFactory.createDefault();
+    public void deleteById_ShouldReturnVoid() {
+        Field field = fieldFactory.createDefault();
         when(fieldRepository.findById(field.getId())).thenReturn(Optional.of(field));
         doNothing().when(fieldRepository).deleteById(field.getId());
 
-        // act
+        // Act
         fieldService.deleteById(field.getId());
 
-        // assert
+        // Assert
         verify(fieldRepository).findById(field.getId());
         verify(fieldRepository).deleteById(field.getId());
     }
 
     @Test
-    public void deleteById_ShouldThrowNotFoundException(){
-        Field field=fieldFactory.createDefault();
-        when(fieldRepository.findById(field.getId())).thenReturn(null);
-        doNothing().when(fieldRepository).deleteById(UUID.randomUUID());
+    public void deleteById_ShouldThrowNotFoundException() {
+        UUID randomId = UUID.randomUUID();
+        when(fieldRepository.findById(randomId)).thenReturn(Optional.empty());
 
-        // act
-
-        // assert
-        Assertions.assertThatThrownBy(()->
-                fieldService.deleteById(UUID.randomUUID())
-        ).isInstanceOf(NotFoundException.class);
-        }
-
+        Assertions.assertThatThrownBy(() -> fieldService.deleteById(randomId))
+                .isInstanceOf(NotFoundException.class);
+    }
 
     @Test
     public void save_ShouldReturnFieldBasicResponseDto() {
-        // arrange
-        Farm farm =farmFactory.createDefault();
+        // Arrange
+        Farm farm = farmFactory.createDefault();
         double area = faker.number().randomDouble(4, 1000, 2000);
 
         FieldCreateRequestDto request = new FieldCreateRequestDto(area, farm.getId());
@@ -120,10 +115,7 @@ public class FieldServiceTest {
         field.setFarm(farm);
         field.setArea(area);
 
-        FieldBasicResponseDto expectedResponse = new FieldBasicResponseDto(
-                field.getId(),
-                field.getArea()
-        );
+        FieldBasicResponseDto expectedResponse = new FieldBasicResponseDto(field.getId(), field.getArea());
 
         when(farmService.getFarmById(farm.getId())).thenReturn(farm);
         when(fieldMapper.toEntity(request)).thenReturn(field);
@@ -131,10 +123,10 @@ public class FieldServiceTest {
         when(fieldMapper.toBasicDto(field)).thenReturn(expectedResponse);
         doNothing().when(fieldValidator).validateFieldCreation(field);
 
-        // act
+        // Act
         FieldBasicResponseDto response = fieldService.save(request);
 
-        // assert
+        // Assert
         Assertions.assertThat(response).isNotNull();
         Assertions.assertThat(response.id()).isEqualTo(field.getId());
         Assertions.assertThat(response.area()).isEqualTo(area);
@@ -143,7 +135,6 @@ public class FieldServiceTest {
     @Test
     public void save_ShouldThrowValidationException_WhenValidationFails() {
         Farm farm = farmFactory.createDefault();
-
         double area = faker.number().randomDouble(4, 1000, 2000);
         FieldCreateRequestDto request = new FieldCreateRequestDto(area, farm.getId());
 
@@ -162,18 +153,16 @@ public class FieldServiceTest {
 
     @Test
     public void update_ShouldReturnDto() {
-        // arrange
+        // Arrange
         Farm farm = farmFactory.createDefault();
-
         double originalArea = faker.number().randomDouble(4, 1000, 3000);
-
         UUID fieldId = UUID.randomUUID();
+
         Field field = fieldFactory.createDefault();
         field.setFarm(farm);
         field.setArea(originalArea);
 
         double newArea = faker.number().randomDouble(4, 1000, 3000);
-
 
         FieldUpdateRequestDto request = new FieldUpdateRequestDto(newArea, farm.getId());
 
@@ -193,31 +182,25 @@ public class FieldServiceTest {
         doNothing().when(fieldValidator).validateFieldUpdate(field, request);
         doNothing().when(fieldMapper).partialUpdate(request, field);
 
-        // act
+        // Act
         FieldBasicResponseDto response = fieldService.update(fieldId, request);
 
-        // assert
+        // Assert
         Assertions.assertThat(response).isNotNull();
         Assertions.assertThat(response.id()).isEqualTo(fieldId);
         Assertions.assertThat(response.area()).isEqualTo(newArea);
-
     }
 
     @Test
-    public void calculateTreePerAreaRate_ShouldReturnDouble(){
-        Field field=fieldFactory.createDefault();
+    public void calculateTreePerAreaRate_ShouldReturnDouble() {
+        Field field = fieldFactory.createDefault();
         field.setTrees(treeFactory.createMany(5));
 
         when(fieldRepository.findById(field.getId())).thenReturn(Optional.of(field));
 
-
-        Double response=fieldService.calculateTreePerAreaRate(field.getId());
-        Double expectedResponse=1000.0 * field.getTrees().size() / field.getArea();
+        Double response = fieldService.calculateTreePerAreaRate(field.getId());
+        Double expectedResponse = 1000.0 * field.getTrees().size() / field.getArea();
 
         Assertions.assertThat(response).isEqualTo(expectedResponse);
-
     }
 }
-
-
-

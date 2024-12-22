@@ -1,6 +1,7 @@
 package org.hidxop.citronix.utils.factories;
 
 import com.github.javafaker.Faker;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.hidxop.citronix.domain.entitiy.Farm;
 import org.hidxop.citronix.domain.entitiy.Tree;
@@ -11,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @Component
+@NoArgsConstructor(force = true)
 public class TreeFactory {
-    private final Faker faker;
+    private final Faker faker=new Faker();
 
     public Tree createDefault() {
         return Tree.builder()
