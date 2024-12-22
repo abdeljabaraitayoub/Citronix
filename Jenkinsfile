@@ -1,13 +1,18 @@
 pipeline {
     agent any
 
+
+    triggers {
+        githubPush()
+    }
+
     environment {
         SONARQUBE_URL = 'http://sonarqube:9000'
         SONAR_TOKEN = credentials('sonar')
         DOCKER_REGISTRY = 'docker.io'
         DOCKER_IMAGE_NAME = 'my-app'
         DOCKER_TAG = 'latest'
-        DOCKER_CREDENTIALS = credentials('docker-hub')  // Add your Docker Hub credentials
+        DOCKER_CREDENTIALS = credentials('docker-hub')
     }
 
     stages {
