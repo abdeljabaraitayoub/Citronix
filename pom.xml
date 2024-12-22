@@ -29,6 +29,7 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+        <sonar.login>sqa_de9dcc0a203b93be7afb838cae4a006233925407</sonar.login>
         <mapstruct.version>1.6.2</mapstruct.version>
     </properties>
     <dependencies>
@@ -141,6 +142,11 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.9.1.2184</version>
+            </plugin>
+            <plugin>
 
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -170,6 +176,7 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>
