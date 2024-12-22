@@ -1,25 +1,25 @@
-#!/usr/bin/env groovy
 pipeline {
     agent any
+
     stages {
-        stage("build") {
+        stage('Checkout Code') {
             steps {
-                echo "build"
+                echo 'Checking out code...'
+                checkout scm
             }
         }
-        stage("test") {
+
+        stage('Build') {
             steps {
-                echo "test"
+                echo 'Building project...'
+                sh './mvnw clean install -DskipTests'
             }
         }
-        stage("validate") {
+
+        stage('Unit Tests') {
             steps {
-                echo "validate"
-            }
-        }
-        stage("deploy") {
-            steps {
-                echo "deploy"
+                echo 'Running unit tests...'
+                sh './mvnw test'
             }
         }
     }
