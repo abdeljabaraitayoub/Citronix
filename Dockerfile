@@ -4,6 +4,6 @@ FROM openjdk:11-jre-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/Citronix-0.0.1-SNAPSHOT.jar .
+COPY --from=build /target/Citronix-0.0.1-SNAPSHOT.jar .
 
 CMD ["java", "-jar", "Citronix-0.0.1-SNAPSHOT.jar"]
