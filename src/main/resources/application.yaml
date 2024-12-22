@@ -14,6 +14,8 @@ spring:
         format_sql: false
         hbm2ddl:
           auto: none
+  liquibase:
+    enabled: false  # Disable Liquibase
 logging:
   level:
     org.hibernate.SQL: debug
