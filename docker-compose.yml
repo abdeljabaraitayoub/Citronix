@@ -25,7 +25,15 @@ services:
       - SONARQUBE_URL=http://sonarqube:9000  # Using SonarQube container name as the hostname
     restart: always
 
-
+  db:
+    image: postgres:latest
+    container_name: sonarqube-db
+    networks:
+      - my_network
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+      - POSTGRES_DB=sonar
 
 networks:
   my_network:
