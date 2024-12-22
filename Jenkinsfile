@@ -2,11 +2,20 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_URL = 'http://sonarqube:9000'  
+        SONARQUBE_URL = 'http://sonarqube:9000'
         SONAR_TOKEN = credentials('sonar')
+        DOCKER_REGISTRY = 'docker.io'
+        DOCKER_IMAGE_NAME = 'my-app'
+        DOCKER_TAG = 'latest'
     }
 
     stages {
+          stage('docker verospm') {
+            steps {
+                echo 'Checking docker version...'
+                sh'docker --version'
+            }
+        }
         stage('Checkout Code') {
             steps {
                 echo 'Checking out code...'
@@ -14,7 +23,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Project') {
             steps {
                 echo 'Building project...'
                 sh './mvnw clean install -DskipTests'
@@ -32,12 +41,20 @@ pipeline {
             steps {
                 echo 'Running SonarQube analysis...'
                 script {
-                    // Running SonarQube analysis using Maven
                     sh """
-                        ./mvnw clean verify sonar:sonar \
-                        -Dsonar.host.url=${SONARQUBE_URL} \
+                        ./mvnw clean verify sonar:sonar \\
+                        -Dsonar.host.url=${SONARQUBE_URL} \\
                         -Dsonar.login=${SONAR_TOKEN}
                     """
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo 'Building Docker image...'
+                    docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_TAG}")
                 }
             }
         }
