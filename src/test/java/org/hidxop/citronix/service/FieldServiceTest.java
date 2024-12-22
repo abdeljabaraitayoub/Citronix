@@ -26,7 +26,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
-@SpringBootTest
 public class FieldServiceTest {
 
     private Faker faker;
