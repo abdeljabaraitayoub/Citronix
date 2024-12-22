@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_URL = 'http://localhost:9000'  // Change if needed (use Docker host IP or container name)
-        SONAR_TOKEN = credentials('sonar-token')
+        SONARQUBE_URL = 'http://sonarqube:9000'  // Your SonarQube server URL
+        SONAR_TOKEN = credentials('sonar')  // The token ID you saved in Jenkins credentials
     }
 
     stages {
@@ -21,24 +21,17 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube analysis...'
+                sh './mvnw sonar:sonar -Dsonar.login=$SONAR_TOKEN'
+            }
+        }
+
         stage('Unit Tests') {
             steps {
                 echo 'Running unit tests...'
                 sh './mvnw test'
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                echo 'Running SonarQube analysis...'
-                script {
-                    // Running SonarQube analysis using Maven
-                    sh """
-                        ./mvnw clean verify sonar:sonar \
-                        -Dsonar.host.url=${SONARQUBE_URL} \
-                        -Dsonar.login=${SONAR_TOKEN}
-                    """
-                }
             }
         }
     }

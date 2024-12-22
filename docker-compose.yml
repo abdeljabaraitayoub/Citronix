@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    networks:
+      - my_network
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+    networks:
+      - my_network
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    environment:
+      - SONARQUBE_URL=http://sonarqube:9000  # Using SonarQube container name as the hostname
+    restart: always
+
+
+
+networks:
+  my_network:
+    driver: bridge
+
+volumes:
+  jenkins_home:
